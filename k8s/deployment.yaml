@@ -20,7 +20,6 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
-        # CRITICAL: HPA requires resource requests and limits to calculate CPU%
         resources:
           requests:
             cpu: "100m"
@@ -41,3 +40,22 @@ spec:
   - port: 80
     targetPort: 3000
     nodePort: 30080
+---
+# Ingress routes default port 80 traffic into the service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gocart-ingress
+  annotations:
+    ingress.class: traefik
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gocart-service
+            port:
+              number: 80
