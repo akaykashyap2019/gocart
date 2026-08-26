@@ -3,7 +3,8 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+# Use npm install instead of npm ci
+RUN npm install
 
 COPY . .
 RUN npm run build
@@ -15,7 +16,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Copy necessary files from the builder
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/.next ./.next
